@@ -1,5 +1,3 @@
-#import maestro
-
 # For motor controllers, servo speed setting dampens acceleration (acts like inertia).
 # Higher values will reduce inertia (try values around 50 to 100) 
 INERTIA = 60
