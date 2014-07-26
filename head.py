@@ -7,25 +7,25 @@ CH_PITCH = 3
 CH_BROW = 4
 # Left/Right yaw constants
 YAW_SPEED = 35
-YAW_ACCELERATION = 4
-YAW_L = 3200
-YAW_CL = 4848
+YAW_ACCELERATION = 5
+YAW_L = 4378
+YAW_CL = 5933
 YAW_C = 6496
-YAW_CR = 8144
-YAW_R = 9792
+YAW_CR = 6895
+YAW_R = 8200
 # Up/Down pitch constants
 PITCH_SPEED = 15
-PITCH_ACCELERATION = 3
-PITCH_U = 6760
-PITCH_CU = 6610
-PITCH_C = 6171
-PITCH_CD = 5650
-PITCH_D = 5440
+PITCH_ACCELERATION = 5
+PITCH_U = 7007
+PITCH_CU = 6591
+PITCH_C = 6343
+PITCH_CD = 6144
+PITCH_D = 5706
 # Brow Up/Down constants
 BROW_SPEED = 30
-BROW_U = 5952
+BROW_U = 4032
 BROW_C = 5100
-BROW_D = 4032
+BROW_D = 5952
 
 #
 # FUNCTIONS
@@ -53,23 +53,23 @@ class Head():
 		maestro.setAccel(CH_YAW, YAW_ACCELERATION)
 		maestro.setAccel(CH_PITCH, PITCH_ACCELERATION)
         
-        def _speedCalc(self, pitch, yaw):
+        def _speedCalc(self, pitch, yaw,throttle=1.0):
                 yaw_delta = abs(yaw - self.maestro.getPosition(CH_YAW))
                 pitch_delta = abs(pitch - self.maestro.getPosition(CH_PITCH))
                 if yaw_delta == 0:
                         yaw_delta += 1
                 if pitch_delta == 0:
                         pitch_delta += 1
-                yaw_time = float(yaw_delta) / YAW_SPEED
-                pitch_time = float(pitch_delta) / PITCH_SPEED
+                yaw_time = float(yaw_delta) / YAW_SPEED * throttle
+                pitch_time = float(pitch_delta) / PITCH_SPEED * throttle
                 if yaw_time >= pitch_time:
                         spd_ratio = pitch_time / yaw_time
-                        pitch_spd = int(spd_ratio * PITCH_SPEED)
-                        return (pitch_spd, YAW_SPEED)
+                        pitch_spd = int(spd_ratio * PITCH_SPEED * throttle)
+                        return (int(pitch_spd), int(YAW_SPEED * throttle))
                 else:
                         spd_ratio = yaw_time / pitch_time
-                        yaw_spd = int(spd_ratio * YAW_SPEED)
-                        return (PITCH_SPEED, yaw_spd)
+                        yaw_spd = int(spd_ratio * YAW_SPEED * throttle)
+                        return (int(PITCH_SPEED * throttle), int(yaw_spd))
                 
 	def isUp(self):
 		return between(self.maestro.getPosition(CH_PITCH),PITCH_CU,PITCH_U)
@@ -118,54 +118,55 @@ class Head():
         def browCenter(self):
                 self.moveBrow(BROW_C)
                 
-	def lookUp(self, speed = 1):
+	def lookUp(self, throttle = 1.0):
                 yawChange = random.randint(-600, 600)
                 yaw = self.maestro.getPosition(CH_YAW) + yawChange
                 pitch = random.randint(PITCH_CU, PITCH_U)
-                (p, y) = self._speedCalc(pitch, yaw)
+                (p, y) = self._speedCalc(pitch, yaw, throttle)
                 print p, y
                 self.maestro.setSpeed(CH_YAW, y)
                 self.maestro.setSpeed(CH_PITCH, p)
                 self.maestro.setTarget(CH_YAW, yaw)
                 self.maestro.setTarget(CH_PITCH, pitch)
                 
-	def lookDown(self, speed = 1):
+	def lookDown(self, throttle = 1.0):
                 yawChange = random.randint(-600, 600)
                 yaw = self.maestro.getPosition(CH_YAW) + yawChange
                 pitch = random.randint(PITCH_D, PITCH_CD)
-                (p, y) = self._speedCalc(pitch, yaw)
+                (p, y) = self._speedCalc(pitch, yaw, throttle)
                 print p, y
                 self.maestro.setSpeed(CH_YAW, y)
                 self.maestro.setSpeed(CH_PITCH, p)
                 self.maestro.setTarget(CH_YAW, yaw)
                 self.maestro.setTarget(CH_PITCH, pitch)
                 
-	def lookLeft(self, speed = 1):
+	def lookLeft(self, throttle = 1.0):
                 pitchChange = random.randint(-600, 600)
                 pitch = self.maestro.getPosition(CH_PITCH) + pitchChange
                 yaw = random.randint(YAW_L, YAW_CL)
-                (p, y) = self._speedCalc(pitch, yaw)
+                (p, y) = self._speedCalc(pitch, yaw, throttle)
                 print p, y
                 self.maestro.setSpeed(CH_YAW, y)
                 self.maestro.setSpeed(CH_PITCH, p)
                 self.maestro.setTarget(CH_YAW, yaw)
                 self.maestro.setTarget(CH_PITCH, pitch)
                 
-	def lookRight(self, speed = 1):
+	def lookRight(self, throttle = 1.0):
                 pitchChange = random.randint(-600, 600)
                 pitch = self.maestro.getPosition(CH_PITCH) + pitchChange
                 yaw = random.randint(YAW_CR, YAW_R)
-                (p, y) = self._speedCalc(pitch, yaw)
+                (p, y) = self._speedCalc(pitch, yaw, throttle)
                 print p, y
                 self.maestro.setSpeed(CH_YAW, y)
                 self.maestro.setSpeed(CH_PITCH, p)
                 self.maestro.setTarget(CH_YAW, yaw)
                 self.maestro.setTarget(CH_PITCH, pitch)
-	def lookCentered(self, speed = 1):
+                
+	def lookCentered(self, throttle = 0.5):
                 pitch = random.randint(PITCH_D, PITCH_U)
                 yaw = random.randint(YAW_CL, YAW_CR)
-                (p, y) = self._speedCalc(pitch, yaw)
-                print p, y
+                (p, y) = self._speedCalc(pitch, yaw, throttle)
+                print "lookCentered",p, y
                 self.maestro.setSpeed(CH_YAW, y)
                 self.maestro.setSpeed(CH_PITCH, p)
                 self.maestro.setTarget(CH_YAW, yaw)
@@ -187,3 +188,4 @@ class Head():
 		else:
 			my = int(PITCH_C + y * (PITCH_C - PITCH_D))
 			self.maestro.setTarget(CH_PITCH, my)
+		#print self.maestro.getPosition(CH_YAW), self.maestro.getPosition(CH_PITCH)

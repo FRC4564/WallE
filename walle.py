@@ -8,7 +8,8 @@ import time
 import emotions
 
 # CONSTANTS
-easteregg = 0
+
+
 # Channels for Servo Controller #1
 CH_LEFT_MOTOR  = 1
 CH_RIGHT_MOTOR = 0
@@ -79,8 +80,8 @@ try:
                 
                 # if the joystick is centered for 5 seconds, change to idle mode
                 #print mode,j.rightX(),j.rightY()
-                if abs(j.rightX()) <.1 and abs(j.rightY()) < .1:
-                        if time.time() - idleTimer >= 5:
+                if abs(j.rightX()) <.1 and abs(j.rightY()) < .1 and abs(j.leftTrigger()) < .1 and abs(j.rightTrigger()) < .1:
+                        if time.time() - idleTimer >= 12:
                                 mode = "idle"
                 else:
                         mode = "manual"
@@ -113,7 +114,7 @@ try:
                         if time.time() > idleWait:  
                                 idleWait = time.time() + random.randint(2,10) #Next idle event wait time
                                 #
-                                look = random.randint(1, 15)
+                                look = random.randint(1, 17)
                                 if look == 1:
                                         head.lookUp()
                                 elif look == 2:
@@ -130,10 +131,10 @@ try:
                                                 head.browCenter()
                                         if brow == 3:
                                                 head.browDown()
-                                elif look >= 7 and look <= 10:
+                                elif look >= 7 and look <= 8:
                                         emotion.Outburst()
                                 else:
-                                        head.lookCentered(1)
+                                        head.lookCentered(0.5)
                 #speed Toggle
                 if j.Back():
                         speedtoggle = False
@@ -146,8 +147,13 @@ try:
 		if j.Y():
                         idleWait = time.time() + random.randint(2,10) #Next idle event wait time
                         mode = "idle"      
-                        emotion.easterEgg(easteregg)
-                        easteregg = 1
+                        if j.leftBumper():
+                                if j.rightBumper():
+                                        emotion.easterEgg()
+                                else:
+                                        emotion.intro()
+                        else:
+                                emotion.intro()
                                 
 		# Print test results if A button is pressed
 		if j.A():
@@ -156,6 +162,7 @@ try:
                         idleWait = time.time() + random.randint(2,10) #Next idle event wait time
                         mode = "idle"
                         emotion.Outburst()
+                        
 except:
 	drivetrain.close()
 	servo.close()

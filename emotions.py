@@ -8,7 +8,6 @@ import time
 
 #VARIABLES
 
-
 #
 # FUNCTIONS
 #
@@ -41,14 +40,14 @@ class Emotions:
 
         def sad(self):
             playSnd("Ohhhh.mp3")
-            self.head.browUp()
+            self.head.browDown()
             self.head.lookDown()
             self.head.lookLeft()
 
 
         def pissed(self):
             playSnd("Motor whir.mp3")
-            self.head.browDown()
+            self.head.browUp()
             self.head.lookCentered()
             playSnd("Jitters.mp3")
 
@@ -59,9 +58,10 @@ class Emotions:
             self.head.browCenter()
 
         def intro(self):
-            self.head.browDown()
             self.head.lookUp()
-            playSnd("Walle Name.mp3")
+            self.head.browCenter()
+            #playSnd("Walle Name.mp3")
+            playSnd ("Walle Name.mp3")
 
         # function to select an emotion
         def Outburst(self):
@@ -81,23 +81,24 @@ class Emotions:
                 print selectEm
 
         # BAD WOLF
-        def easterEgg(self, egg):
+        def easterEgg(self):
                 #if egg == 0:
                 
-                self.head.lookCentered()
+           #     self.head.lookCentered()
+           #     self.head.browUp()
+                self.head.lookUp()
                 self.head.browUp()
-                playSnd("Shakey shakey.mp3")
-                self.head.lookLeft()
-                self.head.lookRight()
-                self.head.lookLeft()
-                self.head.lookRight()
-                self.head.lookLeft()
+                playSnd("Yowl.mp3")
+           #     self.head.lookLeft()
+           #     self.head.lookRight()
+           #     self.head.lookLeft()
+           #     self.head.lookRight()
+           #     self.head.lookLeft()
                 #Drive in circles, maybe?
                 #playSnd("Whoa 2.mp3")
-                egg = 1
                 #else:
                 #        self.intro()
-
+                
                     
         #Additional Thoughts
                 """
